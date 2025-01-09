@@ -8,6 +8,7 @@ import DailyRoutine from './components/Pages/DailyRoutine';
 import Logout from './components/Pages/Logout';
 import SignUp from './components/Pages/SignUp';
 import Celebrations from './components/Pages/Celebrations';
+import Excercise from './components/Pages/Excercise';
 
 const App = () => {
   return (
@@ -22,6 +23,8 @@ const App = () => {
           <Route path="todolist" element={<ToDoList />} />
           <Route path="DailyRoutine" element={<DailyRoutine />} />
           <Route path="Celebrations" element={<Celebrations />} />
+          <Route path="Excercise" element={<Excercise />} />
+
           <Route path="Logout" element={<Logout />} />
         </Route>
       </Routes>

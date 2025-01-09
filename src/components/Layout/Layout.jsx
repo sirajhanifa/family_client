@@ -23,6 +23,10 @@ const Layout = () => {
       path: `/Layout/${username}/Celebrations`
     },
     {
+      name: 'Excercise',
+      path: `/Layout/${username}/Excercise`
+    },
+    {
       name: 'Logout',
       path: `/Layout/${username}/Logout`
     },

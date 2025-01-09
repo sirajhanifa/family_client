@@ -46,7 +46,7 @@ const SignUp = () => {
                     Sign Up
                 </button>
                 <span>
-                    You already have an account?
+                    You already have an account?&nbsp;
                     <span onClick={() => navigate('/')}
                         className="text-blue-900 cursor-pointer hover:underline">
 
