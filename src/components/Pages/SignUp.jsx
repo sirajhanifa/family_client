@@ -27,9 +27,9 @@ const SignUp = () => {
 
 
     return (
-        <div className='w-full h-screen bg-green-400 flex justify-center items-center'>
+        <div className=" w-full h-screen  flex justify-center items-center bg-[url('./assets/nature2.jpeg')] bg-cover bg-center">
 
-            <div className='w-80 h-96 bg-white rounded-xl p-8 flex flex-col items-center'>
+            <div className='w-80 h-96 bg-white rounded-xl p-8 flex flex-col items-center border border-gray-300 shadow-lg'>
                 <h1 className='font-bold text-3xl text-center'>Sign Up</h1>
                 <input type="text"
                     placeholder='Username'

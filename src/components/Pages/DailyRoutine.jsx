@@ -44,3 +44,49 @@ const DailyRoutine = () => {
 };
 
 export default DailyRoutine;
+
+
+// import React from 'react';
+// import { Swiper, SwiperSlide } from 'swiper/react';
+// import { Navigation, Pagination, Autoplay } from 'swiper';
+// import 'swiper/css';
+// import 'swiper/css/navigation';
+// import 'swiper/css/pagination';
+
+// // Import your images
+// import image1 from '../../assets/img1.jpeg';
+// import image2 from '../../assets/img2.jpeg';
+// import image3 from '../../assets/img3.jpeg';
+
+// const ImageSlider = () => {
+//   const images = [image1, image2, image3];
+
+//   return (
+//     <div className="w-full">
+//       <Swiper
+//         modules={[Navigation, Pagination, Autoplay]} // Add the required Swiper modules
+//         spaceBetween={30}
+//         slidesPerView={1}
+//         loop={true}
+//         autoplay={{
+//           delay: 3000,
+//           disableOnInteraction: false,
+//         }}
+//         pagination={{ clickable: true }}
+//         navigation={true}
+//       >
+//         {images.map((image, index) => (
+//           <SwiperSlide key={index}>
+//             <img
+//               src={image}
+//               alt={`Slide ${index + 1}`}
+//               className="w-full h-[400px] object-cover"
+//             />
+//           </SwiperSlide>
+//         ))}
+//       </Swiper>
+//     </div>
+//   );
+// };
+
+// export default ImageSlider;
