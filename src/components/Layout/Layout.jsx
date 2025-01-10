@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useParams } from 'react-router-dom';
+import { FaTachometerAlt, FaList, FaCalendarAlt, FaBirthdayCake, FaDumbbell, FaSignOutAlt, FaMoneyBillAlt } from 'react-icons/fa';
 
 const Layout = () => {
   const { username } = useParams(); // Extract the username from the URL
@@ -8,27 +9,38 @@ const Layout = () => {
   const menuItems = [
     {
       name: 'Dashboard',
-      path: `/Layout/${username}/Dashboard`
+      path: `/Layout/${username}/Dashboard`,
+      icon: <FaTachometerAlt />
     },
     {
       name: 'ToDo List',
-      path: `/Layout/${username}/todolist`
+      path: `/Layout/${username}/todolist`,
+      icon: <FaList />
     },
     {
       name: 'Daily Routine',
-      path: `/Layout/${username}/DailyRoutine`
+      path: `/Layout/${username}/DailyRoutine`,
+      icon: <FaCalendarAlt />
     },
     {
       name: 'Celebrations',
-      path: `/Layout/${username}/Celebrations`
+      path: `/Layout/${username}/Celebrations`,
+      icon: <FaBirthdayCake />
+    },
+    {
+      name: 'Expenses',
+      path: `/Layout/${username}/Expenses`,
+      icon: <FaMoneyBillAlt />
     },
     {
       name: 'Excercise',
-      path: `/Layout/${username}/Excercise`
+      path: `/Layout/${username}/Excercise`,
+      icon: <FaDumbbell />
     },
     {
       name: 'Logout',
-      path: `/Layout/${username}/Logout`
+      path: `/Layout/${username}/Logout`,
+      icon: <FaSignOutAlt />
     },
   ];
 
@@ -39,8 +51,8 @@ const Layout = () => {
         <ul className="space-y-4">
           {menuItems.map((item, index) => (
             <li key={index}>
-              <Link to={item.path} className="text-white hover:underline">
-                {item.name}
+              <Link to={item.path} className="text-white font-bold hover:bg-teal-700 hover:text-gray-200 flex items-center p-2 rounded">
+                {item.icon} <span className="ml-2">{item.name}</span>
               </Link>
             </li>
           ))}

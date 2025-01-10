@@ -4,12 +4,12 @@ import Layout from './components/Layout/Layout';
 import Login from './components/Login/Login';
 import Dashboard from './components/Pages/Dashboard';
 import ToDoList from './components/Pages/ToDoList';
-import DailyRoutine from './components/Pages/DailyRoutine';
+import DailyRoutine from './components/DailyRoutine/DailyRoutine';
 import Logout from './components/Pages/Logout';
 import SignUp from './components/Pages/SignUp';
 import Celebrations from './components/Pages/Celebrations';
 import Excercise from './components/Pages/Excercise';
-
+import Expenses from './components/Expenses/Expenses';
 const App = () => {
   return (
     <Router>
@@ -24,6 +24,7 @@ const App = () => {
           <Route path="DailyRoutine" element={<DailyRoutine />} />
           <Route path="Celebrations" element={<Celebrations />} />
           <Route path="Excercise" element={<Excercise />} />
+          <Route path="Expenses" element={<Expenses />} />
 
           <Route path="Logout" element={<Logout />} />
         </Route>

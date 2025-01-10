@@ -14,6 +14,10 @@ export default {
           '0%': { width: '0%' },
           '100%': { width: '100%' },
         },
+        marquee: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
         blink: {
           '0%, 100%': { borderColor: 'transparent' },
           '50%': { borderColor: 'white' },
@@ -52,6 +56,7 @@ export default {
         bounceIn: 'bounceIn 1s ease-out',
         fadeIn: 'fadeIn 2s ease-out',
         slideUp: 'slideUp 1.5s ease-out',
+        marquee: 'marquee 10s linear infinite',
       },
     },
   },
