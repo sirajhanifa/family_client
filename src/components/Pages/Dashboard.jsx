@@ -12,7 +12,7 @@ const Dashboard = () => {
       </h1>
 
       {/* Motivational Message */}
-      <p className="text-lg text-gray-300 mt-4">
+      <p className="text-lg text-black font-bold mt-4">
         Today is your day to shine! 🌟
       </p>
     </div>

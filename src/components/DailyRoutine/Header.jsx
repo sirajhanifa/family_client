@@ -1,4 +1,5 @@
 import React from 'react'
+import ProgressChart from './ProgressChart'
 
 const Header = () => {
 
@@ -9,6 +10,7 @@ const Header = () => {
             <p className='text-lg text-gray-600 mt-2'>
                 Manage your daily tasks effectively and stay productive.
             </p>
+            <ProgressChart />
         </div>
     )
 }

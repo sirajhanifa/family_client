@@ -45,7 +45,7 @@ const Layout = () => {
   ];
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <nav className="w-52 bg-customTeal p-4">
         <ul className="space-y-4">
@@ -60,7 +60,7 @@ const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 bg-gray-100">
+      <main className=" flex-1 p-4 bg-gray-100 overflow-auto">
         <Outlet />
       </main>
     </div>

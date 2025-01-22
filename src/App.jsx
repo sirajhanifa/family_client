@@ -8,7 +8,7 @@ import DailyRoutine from './components/DailyRoutine/DailyRoutine';
 import Logout from './components/Pages/Logout';
 import SignUp from './components/Pages/SignUp';
 import Celebrations from './components/Pages/Celebrations';
-import Excercise from './components/Pages/Excercise';
+import Excercise from './components/Pracitse/Excercise';
 import Expenses from './components/Expenses/Expenses';
 const App = () => {
   return (
