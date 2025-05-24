@@ -1,6 +1,12 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { MdDelete } from "react-icons/md";
+import { MdModeEdit } from "react-icons/md";
+import { usePDF } from 'react-to-pdf';
+
+
+
 
 const Celebrations = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -8,6 +14,15 @@ const Celebrations = () => {
     const [celebrations, setCelebrations] = useState([]);
     const [newEventDate, setNewEventDate] = useState('');
     const [newDescription, setNewDescription] = useState('');
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [selectedValue, setSelectedValue] = useState(null)
+    const [formData, setFormData] = useState({
+        description: "",
+        eventDate: "",
+    })
+    const {to} = usePDF({filename:"hanifa.pdf"})
+
+
 
 
     // Fetch all celebrations from the server
@@ -26,8 +41,8 @@ const Celebrations = () => {
 
     // Add a new celebration
     const addCelebration = async () => {
-        try{
-            if(!newEventDate.trim() || !newDescription.trim()){
+        try {
+            if (!newEventDate.trim() || !newDescription.trim()) {
                 alert('Event Date and Description cannot be empty!');
                 return;
             }
@@ -41,12 +56,43 @@ const Celebrations = () => {
             setNewDescription('');
 
         }
-        catch(error){
+        catch (error) {
             console.log(error);
-            
+
         }
     }
 
+
+    //toggleEdit
+    const toggleEdit = (value) => {
+        setSelectedValue(value)
+        setFormData({
+            description: value.description,
+            eventDate: value.eventDate,
+        })
+
+
+        setIsEditModalOpen(true)
+    }
+    //CancelEdit
+    const cancelEdit = () => {
+        setIsEditModalOpen(false)
+    }
+
+    //handleChange for Edit
+    const handleChange =(e) =>{
+        const [name, value] = e.target;
+        setFormData({
+            ...formData,
+            [name]:value,
+        })
+    }
+
+    //handleEdit save
+
+    const handleSaveEdit =() =>{
+        
+    }
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-50 to-green-50 p-8">
             {/* Header Section */}
@@ -64,7 +110,7 @@ const Celebrations = () => {
                         type="date"
                         className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                         value={newEventDate}
-                        onChange={(e) =>{setNewEventDate(e.target.value)}
+                        onChange={(e) => { setNewEventDate(e.target.value) }
                         }
 
                     />
@@ -73,7 +119,7 @@ const Celebrations = () => {
                         placeholder="Enter your Memorable Moment"
                         className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
                         value={newDescription}
-                        onChange={(e) =>{setNewDescription(e.target.value)}}
+                        onChange={(e) => { setNewDescription(e.target.value) }}
                     />
                     <button className="bg-green-500 px-6 py-3 text-white font-bold rounded-lg hover:bg-green-700 transition" onClick={addCelebration}>
                         ADD CELEBRATION
@@ -95,6 +141,12 @@ const Celebrations = () => {
                                 <p className="text-gray-600">
                                     📅 {new Date(celebration.eventDate).toDateString()}
                                 </p>
+                                <div className=' flex justify-end'>
+                                    <button
+                                        className="p-4 text-xl"
+                                        onClick={()=>toggleEdit(celebration)}><MdModeEdit /></button>
+                                    <button><MdDelete /></button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -102,6 +154,57 @@ const Celebrations = () => {
                     <p className="text-gray-500 text-center">No upcoming celebrations found.</p>
                 )}
             </div>
+
+            {/*Edit Modal*/ }
+
+            {isEditModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Edit Your Celebration</h2>
+                        <form>
+                            <div className="mb-4">
+                                <label className="block font-medium mb-2">Event Name</label>
+                                <input type="text"
+                                    className="w-full p-3 border rounded-lg focus:outline-none"
+                                    name='description'
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                />
+
+
+                            </div>
+                            <div className="mb-4">
+                                <label className="block font-medium mb-2">Event Name</label>
+                                <input type="date"
+                                    className="w-full p-3 border rounded-lg focus:outline-none"
+                                    name='eventDate'
+                                    value={formData.eventDate.split('T')[0]}   
+                                    onChange={handleChange}
+
+                                />
+
+
+                            </div>
+
+                        </form>
+                        <button
+                            className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                            onClick={cancelEdit}>
+                            Cancel
+                        </button>
+                        <button className="px-4 py-2 bg-green-300 rounded-lg hover:bg-gray-400"
+
+                        >Save
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+            )}
+
+
         </div>
     );
 };
