@@ -33,11 +33,6 @@ const Layout = () => {
       icon: <FaMoneyBillAlt />
     },
     {
-      name: 'Excercise',
-      path: `/Layout/${username}/Excercise`,
-      icon: <FaDumbbell />
-    },
-    {
       name: 'Logout',
       path: `/Layout/${username}/Logout`,
       icon: <FaSignOutAlt />
