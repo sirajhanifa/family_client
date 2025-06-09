@@ -3,8 +3,12 @@ import Heading from '../../components/Heading';
 import Button from '../../components/Button1';
 import usePost from '../../hooks/usePost';
 import useFetch from '../../hooks/useFetch';
+import { useParams } from 'react-router-dom';
 
 const Expenses = () => {
+  const {username} = useParams();
+  // const username = 'john123'; // 🔁 Change to logged-in user's username
+
   const [form, setForm] = useState({
     name: '',
     amount: '',
@@ -12,13 +16,20 @@ const Expenses = () => {
     date: '',
   });
 
-  const { data: postRes, loading, error, postData } = usePost('http://localhost:5000/api/expenses');
+  // 🔁 Updated URLs to include username
+  const {
+    data: postRes,
+    loading,
+    error,
+    postData,
+  } = usePost(`http://localhost:5000/api/expenses/${username}`);
+
   const {
     data: expenses,
     loading: fetchLoading,
     error: fetchError,
     refetch,
-  } = useFetch('http://localhost:5000/api/fetchexpenses');
+  } = useFetch(`http://localhost:5000/api/fetchexpenses/${username}`);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -79,7 +90,7 @@ const Expenses = () => {
           <option value="Bills">Bills</option>
           <option value="Entertainment">Entertainment</option>
           <option value="Health">Health</option>
-          <option value="Ohters">Ohters</option>
+          <option value="Others">Others</option>
         </select>
         <input
           name="date"
