@@ -28,6 +28,7 @@ const SignUp = () => {
       setNewUser('');
       setNewPassword('');
       alert('Sign Up Successfully');
+      navigate('/login')
     } catch (error) {
       console.error('Error creating user:', error);
       alert('User already exists');

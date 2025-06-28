@@ -1,151 +1,244 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Heading from '../../components/Heading';
-import Button from '../../components/Button1';
 import usePost from '../../hooks/usePost';
-import useFetch from '../../hooks/useFetch';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Expenses = () => {
-  const {username} = useParams();
-  // const username = 'john123'; // 🔁 Change to logged-in user's username
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const { username } = useParams();
+
+  const { postData } = usePost();
 
   const [form, setForm] = useState({
-    name: '',
+    expense: '',
     amount: '',
     category: '',
-    date: '',
+    date: ''
   });
 
-  // 🔁 Updated URLs to include username
-  const {
-    data: postRes,
-    loading,
-    error,
-    postData,
-  } = usePost(`http://localhost:5000/api/expenses/${username}`);
+  const [totalIncome, setTotalIncome] = useState('');
+  const [remainingIncome, setRemainingIncome] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [expenses, setExpenses] = useState([]);
 
-  const {
-    data: expenses,
-    loading: fetchLoading,
-    error: fetchError,
-    refetch,
-  } = useFetch(`http://localhost:5000/api/fetchexpenses/${username}`);
+  // Fetch income
+  const fetchIncome = async () => {
+    try {
+      const res = await axios.get(`${apiUrl}/api/getIncome/${username}`);
+      setTotalIncome(res.data.total_income);
+      setRemainingIncome(res.data.remaining_income);
+    } catch (err) {
+      console.error('Failed to fetch income:', err);
+    }
+  };
 
+  // Fetch expenses
+  const fetchExpenses = async () => {
+    try {
+      const res = await axios.get(`${apiUrl}/api/expenses/${username}`);
+      setExpenses(res.data);
+    } catch (err) {
+      console.error('Failed to fetch expenses:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchIncome();
+    fetchExpenses();
+  }, [username, apiUrl]);
+
+  // Handle form change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Add expense
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = await postData(`${apiUrl}/api/newExpense`, {
+      ...form,
+      username
+    });
 
-    if (!form.name || !form.amount || !form.category || !form.date) {
-      alert('Please fill all fields');
-      return;
+    if (result && result.expense) {
+      await fetchExpenses(); // ✅ Refresh table
+      await fetchIncome();   // ✅ Update remaining income
+      setForm({ expense: '', amount: '', category: '', date: '' });
+    } else {
+      alert('Failed to add expense');
     }
+  };
 
-    const result = await postData(form);
-    if (result) {
-      alert('Expense added!');
-      setForm({ name: '', amount: '', category: '', date: '' });
-      refetch();
+  // Set income
+  const handleIncomeSubmit = async (e) => {
+    e.preventDefault();
+    const result = await postData(`${apiUrl}/api/setIncome`, {
+      username,
+      totalIncome
+    });
+
+    if (result?.income) {
+      setIsModalOpen(false);
+      await fetchIncome(); // ✅ Refresh income values
+      alert('Income set successfully!');
+    } else {
+      alert('Failed to set income');
     }
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 flex flex-col items-center p-6">
-      <div className="w-full max-w-5xl mb-6 text-center">
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+      {/* Header */}
+      <div className="mb-6 text-center">
         <Heading name="Expense Tracker" />
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-5xl bg-white p-4 rounded-lg shadow border flex flex-wrap gap-4 items-center justify-between"
-      >
+      {/* Total Income */}
+      <div className="border border-black flex justify-end items-center gap-3 mb-6">
+        <label className="font-semibold">Total Income</label>
         <input
-          name="name"
-          type="text"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Expense Name"
-          className="flex-1 min-w-[150px] border border-gray-300 rounded px-4 py-2"
-        />
-        <input
-          name="amount"
           type="number"
-          value={form.amount}
-          onChange={handleChange}
-          placeholder="Amount"
-          className="flex-1 min-w-[100px] border border-gray-300 rounded px-4 py-2"
+          className="min-w-[150px] border font-bold text-lg rounded-lg p-3"
+          value={totalIncome}
+          disabled
         />
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          className="flex-1 min-w-[120px] border border-gray-300 rounded px-4 py-2"
-        >
-          <option value="" disabled>-- Select --</option>
-          <option value="Food">Food</option>
-          <option value="Travel">Travel</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Bills">Bills</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Health">Health</option>
-          <option value="Others">Others</option>
-        </select>
+        <label className="font-semibold ml-4">Remaining Income</label>
         <input
-          name="date"
-          type="date"
-          value={form.date}
-          onChange={handleChange}
-          className="flex-1 min-w-[150px] border border-gray-300 rounded px-4 py-2"
+          type="number"
+          className="min-w-[150px] border border-green-400 font-bold text-lg rounded-lg p-3"
+          value={remainingIncome}
+          disabled
         />
-        <Button label={loading ? 'Adding...' : 'Add Expense'} type="submit" disabled={loading} />
-      </form>
-
-      {error && <p className="text-red-600 mt-4">{error}</p>}
-      {postRes && <p className="text-green-600 mt-4">Expense added successfully!</p>}
-
-      <div className="w-full max-w-5xl mt-6">
-        <h2 className="text-xl font-semibold mb-2">Expense List</h2>
-        {fetchLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-300 text-sm text-left">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="px-4 py-2 border">Name</th>
-                  <th className="px-4 py-2 border">Amount</th>
-                  <th className="px-4 py-2 border">Category</th>
-                  <th className="px-4 py-2 border">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(!expenses || expenses.length === 0) ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-4">No expenses available</td>
-                  </tr>
-                ) : (
-                  expenses.map((expense, index) => {
-                    const date = new Date(expense.date);
-                    const formattedDate = date.toLocaleDateString();
-
-                    return (
-                      <tr key={index} className="hover:bg-gray-100">
-                        <td className="px-4 py-2 border">{expense.name}</td>
-                        <td className="px-4 py-2 border">{expense.amount}</td>
-                        <td className="px-4 py-2 border">{expense.category}</td>
-                        <td className="px-4 py-2 border">{formattedDate}</td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {fetchError && <p className="text-red-600">{fetchError}</p>}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700"
+        >
+          Set Income
+        </button>
       </div>
+
+      {/* Add Expense Form */}
+      <div className="max-w-7xl mx-auto bg-white shadow-md rounded-xl p-6 overflow-x-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-wrap md:flex-nowrap gap-4 items-center justify-between w-full"
+        >
+          <input
+            type="text"
+            name="expense"
+            value={form.expense}
+            onChange={handleChange}
+            placeholder="Expense Name"
+            className="flex-1 border rounded-lg p-3"
+            required
+          />
+          <input
+            type="number"
+            name="amount"
+            value={form.amount}
+            onChange={handleChange}
+            placeholder="Amount"
+            className="flex-1 border rounded-lg p-3"
+            required
+          />
+          <select
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            className="flex-1 border rounded-lg p-3"
+            required
+          >
+            <option value="">-- Category --</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Health">Health</option>
+            <option value="Education">Education</option>
+            <option value="Bills">Bills</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Rent">Rent</option>
+            <option value="Other">Other</option>
+          </select>
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            className="flex-1 border rounded-lg p-3"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700"
+          >
+            Add
+          </button>
+        </form>
+      </div>
+
+      {/* Expense Table */}
+      {expenses.length > 0 ? (
+        <table className="min-w-full border rounded-lg shadow-sm mt-6 bg-white">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2 border-b">Amount</th>
+              <th className="px-4 py-2 border-b">Category</th>
+              <th className="px-4 py-2 border-b">Description</th>
+              <th className="px-4 py-2 border-b">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {expenses.map((item, idx) => (
+              <tr key={idx} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border-b">{item.amount}</td>
+                <td className="px-4 py-2 border-b">{item.category}</td>
+                <td className="px-4 py-2 border-b">{item.description}</td>
+                <td className="px-4 py-2 border-b">{new Date(item.date).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="mt-6 text-center">No expenses to display.</p>
+      )}
+
+      {/* Modal for Income */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-80">
+            <h2 className="text-2xl font-semibold text-center mb-6">
+              Set Your Total Income
+            </h2>
+            <form onSubmit={handleIncomeSubmit} className="flex flex-col gap-4">
+              <input
+                type="number"
+                value={totalIncome}
+                onChange={(e) => setTotalIncome(e.target.value)}
+                placeholder="Enter your income"
+                className="border p-3 rounded-lg"
+                required
+              />
+              <div className="flex justify-between gap-4">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-1/2 bg-gray-300 py-2 rounded-lg hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-1/2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
