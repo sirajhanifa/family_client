@@ -13,11 +13,6 @@ const Layout = () => {
       icon: <FaTachometerAlt />
     },
     {
-      name: 'ToDo List',
-      path: `/Layout/${username}/todolist`,
-      icon: <FaList />
-    },
-    {
       name: 'Daily Routine',
       path: `/Layout/${username}/DailyRoutine`,
       icon: <FaCalendarAlt />
@@ -31,6 +26,11 @@ const Layout = () => {
       name: 'Expenses',
       path: `/Layout/${username}/Expenses`,
       icon: <FaMoneyBillAlt />
+    },
+    {
+      name: 'Report',
+      path: `/Layout/${username}/Report`,
+      icon: <FaDumbbell />
     },
     {
       name: 'Logout',

@@ -21,6 +21,7 @@ const Expenses = () => {
   const [remainingIncome, setRemainingIncome] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch income
   const fetchIncome = async () => {
@@ -55,6 +56,7 @@ const Expenses = () => {
 
   // Add expense
   const handleSubmit = async (e) => {
+    setIsSubmitting(true);
     e.preventDefault();
     const result = await postData(`${apiUrl}/api/newExpense`, {
       ...form,
@@ -68,6 +70,7 @@ const Expenses = () => {
     } else {
       alert('Failed to add expense');
     }
+    setIsSubmitting(false);
   };
 
   // Set income
@@ -112,6 +115,7 @@ const Expenses = () => {
         />
         <button
           onClick={() => setIsModalOpen(true)}
+          disabled={isSubmitting}
           className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700"
         >
           Set Income
@@ -171,9 +175,10 @@ const Expenses = () => {
           />
           <button
             type="submit"
+            disabled={isSubmitting}
             className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700"
           >
-            Add
+            {isSubmitting?'Adding...':'Add'}
           </button>
         </form>
       </div>
