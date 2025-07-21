@@ -1,78 +1,68 @@
-import React from 'react'
-import Heading from '../../components/Heading'
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import Button1 from '../../components/Button1'; // still unused, consider removing if not used
 import usePost from '../../hooks/usePost';
+import { useParams } from 'react-router-dom';
 
 const Report = () => {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const { username } = useParams();
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const { username } = useParams();
 
-    //hooks
+  const [date, setDate] = useState('');
+  const [reportData, setReportData] = useState(null); // Optional: for storing fetched report
+  const { postData } = usePost();
 
-    const { postData } = usePost();
+  const handleChange = (e) => {
+    setDate(e.target.value);
+  };
 
-    const [date, setDate] = useState('')
-    const [incomeData, setIncomeData] = useState({})
+  const handleSubmit = async () => {
+    try {
+      console.log('Generating report for:', username, date);
+      const response = await postData(`${apiUrl}/api/report`, { username, date });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await postData(`${apiUrl}/api/reports`, { username, date });
-            if (!res) {
-                alert("No expense available");
-            } else {
-                setIncomeData(res); // <-- Save the response object
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+      if (response?.success) {
+        setReportData(response.data); // handle data
+        alert('Report generated successfully');
+      } else {
+        alert('Failed to generate report');
+      }
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('An error occurred');
+    }
+  };
 
+  return (
+    <div className="w-full h-screen flex justify-center items-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md border border-black w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-4 text-center">Generate Monthly Report</h2>
+        
+        <label className="block mb-2 font-medium text-gray-700">Select Month</label>
+        <input
+          name="date"
+          value={date}
+          onChange={handleChange}
+          type="month"
+          className="w-full p-3 border border-black rounded-lg mb-4"
+        />
 
-    return (
-        <div className='w-full h-screen '>
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition duration-200"
+        >
+          Generate Report
+        </button>
 
-            {/* Heading  */}
-            <div className='w-full h-fit flex justify-center'>
-                <Heading name="Reports" />
-            </div>
+        {/* Optional: Show result */}
+        {reportData && (
+          <div className="mt-4 p-3 border rounded bg-gray-50">
+            <h3 className="font-bold">Report Result:</h3>
+            <pre className="text-sm">{JSON.stringify(reportData, null, 2)}</pre>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-8 bg-white p-6 rounded-xl shadow-md">
-                <div className="mb-4 flex flex-col gap-2">
-                    <label htmlFor="month" className="font-semibold text-gray-700">
-                        Select Month:
-                    </label>
-                    <input
-                        id="month"
-                        name="month"
-                        type="month"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        required
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                    Generate Report
-                </button>
-            </form>
-
-            {incomeData && incomeData.total_income !== undefined && (
-                <div className="max-w-md mx-auto mt-6 bg-gray-50 p-4 rounded shadow">
-                    <h2 className="text-lg font-bold mb-2">Expense Report</h2>
-                    <p><span className="font-semibold">Total Income:</span> {incomeData.total_income}</p>
-                    <p><span className="font-semibold">Remaining Income:</span> {incomeData.remaining_income}</p>
-                    <p><span className="font-semibold">Total Expense:</span> {incomeData.expense}</p>
-                    <p><span className="font-semibold">Month:</span> {incomeData.month}</p>
-                </div>
-            )}
-
-        </div>
-    )
-}
-
-export default Report
+export default Report;

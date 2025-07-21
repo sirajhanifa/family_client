@@ -1,81 +1,54 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../components/Loader'; // Adjust path as needed
+import Loader from '../components/Loader'; // Adjust path
 
 const SignUp = () => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const [newUser, setNewUser] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Loader state
+  const [form, setForm] = useState({
+    username: '',
+    phone: '',
+    password: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const postUser = async () => {
-    if (!newUser || !newPassword) {
-      alert('Please fill in both fields');
+    const { username, phone, password } = form;
+
+    if (!username || !phone || !password) {
+      alert('Please fill in all fields');
       return;
     }
 
-    setLoading(true); // Show loader
-
+    setLoading(true);
     try {
-      const response = await axios.post(`${apiUrl}/api/newUser`, {
-        username: newUser,
-        password: newPassword,
-      });
-
-      setNewUser('');
-      setNewPassword('');
-      alert('Sign Up Successfully');
-      navigate('/login')
+      const response = await axios.post(`${apiUrl}/api/newUser`, form);
+      alert(response.data.message);
+      navigate('/login');
     } catch (error) {
-      console.error('Error creating user:', error);
-      alert('User already exists');
+      alert(error.response?.data?.error || 'Signup failed');
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative w-full h-screen flex justify-center items-center bg-[url('./assets/nature2.jpeg')] bg-cover bg-center">
       {loading && <Loader />}
-
-      <div
-        className={`w-80 h-96 bg-white rounded-xl p-8 flex flex-col items-center border border-gray-300 shadow-lg transition-all duration-300 ${
-          loading ? 'blur-sm pointer-events-none' : ''
-        }`}
-      >
+      <div className={`w-80 h-96 bg-white rounded-xl p-8 flex flex-col items-center border border-gray-300 shadow-lg transition-all duration-300 ${loading ? 'blur-sm pointer-events-none' : ''}`}>
         <h1 className="font-bold text-3xl text-center">Sign Up</h1>
-        <input
-          type="text"
-          placeholder="Username"
-          className="border border-gray-500 w-full m-4 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          onChange={(e) => setNewUser(e.target.value)}
-          value={newUser}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="border border-gray-500 w-full m-2 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          onChange={(e) => setNewPassword(e.target.value)}
-          value={newPassword}
-        />
-        <button
-          className="w-full bg-green-500 p-3 rounded-lg text-white font-bold hover:text-black m-4"
-          onClick={postUser}
-        >
-          Sign Up
-        </button>
-        <span>
-          You already have an account?{' '}
-          <span
-            onClick={() => navigate('/')}
-            className="text-blue-900 cursor-pointer hover:underline"
-          >
-            Login
-          </span>
-        </span>
+        <input type="text" name="username" placeholder="Username" onChange={handleChange} value={form.username} className="border w-full m-2 p-2 rounded-md" />
+        <input type="number" name="phone" placeholder="Phone" onChange={handleChange} value={form.phone} className="border w-full m-2 p-2 rounded-md" />
+        <input type="password" name="password" placeholder="Password" onChange={handleChange} value={form.password} className="border w-full m-2 p-2 rounded-md" />
+        <button onClick={postUser} className="w-full bg-green-500 p-3 rounded-lg text-white font-bold hover:text-black m-2">Sign Up</button>
+        <span>You already have an account? <span onClick={() => navigate('/')} className="text-blue-900 cursor-pointer hover:underline">Login</span></span>
       </div>
     </div>
   );

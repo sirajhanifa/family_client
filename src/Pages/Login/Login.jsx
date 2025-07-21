@@ -27,7 +27,10 @@ const Login = () => {
 
       if (response.status === 200) {
         const { token, user } = response.data;
+        console.log(token);
+        
         localStorage.setItem('authToken', token);
+        localStorage.setItem('username', user.username);
         navigate(`/Layout/${user.username}/Dashboard`);
       }
     } catch (error) {

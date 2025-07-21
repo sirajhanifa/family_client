@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { FaTachometerAlt, FaList, FaCalendarAlt, FaBirthdayCake, FaDumbbell, FaSignOutAlt, FaMoneyBillAlt } from 'react-icons/fa';
+import { IoMdSettings } from "react-icons/io";
 
 const Layout = () => {
   const { username } = useParams(); // Extract the username from the URL
@@ -31,6 +32,12 @@ const Layout = () => {
       name: 'Report',
       path: `/Layout/${username}/Report`,
       icon: <FaDumbbell />
+    },
+    {
+      name:'Settings',
+      path:`/Layout/${username}/Settings`,
+      icon:<IoMdSettings />
+
     },
     {
       name: 'Logout',

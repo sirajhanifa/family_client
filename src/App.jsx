@@ -10,6 +10,9 @@ import Celebrations from './Pages/Celebrations/Celebrations';
 import Expenses from './Pages/Expenses/Expenses';
 import Report from './Pages/Report/Report';
 import Home from './Pages/Home';
+import Settings from './Pages/Settings/Settings';
+import Profile from './Pages/Settings/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 const App = () => {
   return (
     <Router>
@@ -20,11 +23,17 @@ const App = () => {
 
         {/* Layout with Nested Routes */}
         <Route path="Layout/:username" element={<Layout />}>
-          <Route path="Dashboard" element={<Dashboard />} />
+          <Route path="Dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
           <Route path="DailyRoutine" element={<DailyRoutine />} />
           <Route path="Celebrations" element={<Celebrations />} />
           <Route path="Expenses" element={<Expenses />} />
-          <Route path="Report" element={<Report />}/>
+          <Route path="Report" element={<Report />} />
+          <Route path="Settings" element={<Settings />} />
+          <Route path="Profile" element={<Profile />} />
           <Route path="Logout" element={<Logout />} />
         </Route>
       </Routes>
