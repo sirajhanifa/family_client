@@ -42,6 +42,8 @@ const Profile = () => {
     try {
       const res = await axios.post(`${apiUrl}/api/upload`, formData);
       setImagePath(res.data.profileImage);
+      console.log(res.data.profileImage);
+      
       alert('Upload successful!');
     } catch (err) {
       alert('Upload failed');
